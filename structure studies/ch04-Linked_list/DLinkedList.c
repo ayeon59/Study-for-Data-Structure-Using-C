@@ -10,6 +10,10 @@ void ListInit(List * plist){
 } 
 /*for initiallize Node*/
 
+void SetSortRule(List *plist, int(*comp)(LData d1, LData d2)){
+	plist->comp = comp;
+}
+
 void FInsert(List *plist, LData data){
 	Node * newNode = (Node*)malloc(sizeof(Node));
 	newNode->data = data;
@@ -23,6 +27,18 @@ void FInsert(List *plist, LData data){
 /*for add a newNode*/
 
 void SInsert(List *plist, LData data){
+	Node * newNode = (Node*)malloc(sizeof(Node));
+	Node * pred = plist->head;
+	newNode->data = data;
+
+	while(pred->next != NULL && plist->comp(data,pred->next->data)!=0){
+		pred = pred->next;
+	}
+
+	newNode->next = pred->next;
+	pred->next = newNode;
+
+	(plist->numOfData)++;
 
 }
 
@@ -69,10 +85,17 @@ int LCount(List * plist){
 	return plist->numOfData;
 }
 
+int WhoIsPrecede(int d1, int d2){
+	if(d1<d2) return 0;
+	else return 1;
+}
+
 int main(){
 	List list;
 	int data;
 	ListInit(&list);
+
+	SetSortRule(&list, WhoIsPrecede);
 
 	LInsert(&list,11);
 	LInsert(&list,11);
